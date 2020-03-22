@@ -5,7 +5,7 @@ import tempfile
 from datetime import datetime
 
 import models
-from models import Player, Course, Score, Round, Tournament
+from models import Player, Course, Score
 
 # Foreign keys ON
 from sqlalchemy.engine import Engine
@@ -52,27 +52,9 @@ def _get_score():
 
     return Score(
         throws=54,
-        par=course.par,
-        course_id=course.id,
-        player_id=player.id
+        course=course,
+        player=player
     )
-
-def _get_round():
-    #score = _get_score()
-    #course = Course.query.filter_by(id=score.course_id).first()
-
-    return Round(
-        date=datetime.now(),
-        num_players=1,
-        #course=course,
-        #scores=[score]
-    )
-
-def _get_tournament():
-    return Tournament(
-        name="Maailmam mestaruus turnaus:D",
-    )
-
 
 def test_create_player(db_handle):
     player = _get_player()
@@ -94,17 +76,3 @@ def test_create_course(db_handle):
     db_handle.session.add(course)
     db_handle.session.commit()
     assert Course.query.count() == 1
-
-def test_create_round(db_handle):
-    round = _get_round()
-
-    db_handle.session.add(round)
-    db_handle.session.commit()
-    assert Round.query.count() == 1
-
-def test_create_tournament(db_handle):
-    tournament = _get_tournament()
-
-    db_handle.session.add(tournament)
-    db_handle.session.commit()
-    assert Tournament.query.count() == 1
