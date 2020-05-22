@@ -1,40 +1,18 @@
 @startuml
 hide circle
 
-entity "Kisa" as kisa {
-  *kisa_id : number
-  --
-  name : text
-  description : text
+entity "Score" as score {
 }
 
-entity "Kierros" as kierros {
-  *kierros_id : number <<PK>>
-  --
-  kisa_id : number <<FK>>
+entity "Course" as course {
+  name
 }
 
-entity "Tulos" as tulos {
-  *tulos_id : number <<PK>>
-  *pelaaja_id : number <<FK>>
-  *rata_id : number <<FK>>
+entity "Player" as player {
+  name
 }
 
-entity "Rata" as rata {
-  *rata_id : number<<PK>>
-  --
-  name : text
-}
-
-entity "Pelaaja" as pelaaja {
-  *pelaaja_id : number <<PK>>
-  --
-  name : text
-}
-
-kisa "0..*" -- "1..*" kierros
-kierros "1" *-- "1..*" tulos
-tulos "1" o-- "1" pelaaja
-tulos "1" o-- "1" rata
+player  o--  score : achieved by
+course  o--  score : achieved at
 
 @enduml
