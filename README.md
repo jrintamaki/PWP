@@ -6,5 +6,5 @@ Frolf Tracker
 * Student 2. Julius Rintamäki, @student.oulu.fi
 * Student 3. Ville Karsikko, @student.oulu
 
-Installation:
+# Installation:
 > pip install -e .
