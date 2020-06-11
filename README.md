@@ -10,5 +10,7 @@ Frolf Tracker
 > pip install -e .
 
 > export FLASK_APP=frolftracker
+
 > export FLASK_ENV=development
+
 > flask run
