@@ -6,5 +6,9 @@ Frolf Tracker
 * Student 2. Julius Rintamäki, @student.oulu.fi
 * Student 3. Ville Karsikko, @student.oulu
 
-# Installation:
+# Installation and execution:
 > pip install -e .
+
+> export FLASK_APP=frolftracker
+> export FLASK_ENV=development
+> flask run
