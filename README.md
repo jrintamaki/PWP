@@ -7,4 +7,4 @@ Frolf Tracker
 * Student 3. Ville Karsikko, @student.oulu
 
 Installation:
->>> pip install -e .
+> pip install -e .
