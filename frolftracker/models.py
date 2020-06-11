@@ -31,8 +31,8 @@ class Score(db.Model):
     course_id = db.Column(db.ForeignKey("course.id", ondelete="CASCADE"), nullable=False)
     date = db.Column(db.Date, nullable=False)
 
-    course = db.relationship("Course", back_populates="scores")
-    player = db.relationship("Player", back_populates="scores")
+    course = db.relationship("Course", back_populates="scores", uselist=False)
+    player = db.relationship("Player", back_populates="scores", uselist=False)
 
 
 class Course(db.Model):
