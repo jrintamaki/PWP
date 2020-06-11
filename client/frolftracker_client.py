@@ -48,6 +48,24 @@ def create_course(name, holes=18, par=54):
 def create_score(throws, player_id, course_id):
     pass
 
+def modify_player(name):
+    pass
+
+def modify_course(name, holes=18, par=54):
+    pass
+
+def modify_score(throws, player_id, course_id):
+    pass
+
+def delete_player(id):
+    pass
+
+def delete_course(id):
+    pass
+
+def delete_score(id):
+    pass
+
 def iterate_players(s, root_path, players_href):
     pass
 

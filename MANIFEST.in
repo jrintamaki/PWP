@@ -1,0 +1,2 @@
+graft sensorhub/static
+global-exclude *.pyc

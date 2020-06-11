@@ -2,10 +2,11 @@ import os
 import pytest
 import tempfile
 
-from datetime import datetime
+from datetime import date
 
-import models
-from models import Player, Course, Score
+from frolftracker import create_app, db
+from frolftracker.models import Player, Course, Score
+
 
 # Foreign keys ON
 from sqlalchemy.engine import Engine
@@ -22,17 +23,20 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     SQLAlchemy uses SQL queries correctly, so only database models and their relations are tested.'''
 
 @pytest.fixture
-def db_handle():
+def app():
     db_fd, db_fname = tempfile.mkstemp()
-    models.app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + db_fname
-    models.app.config["TESTING"] = True
-
-    with models.app.app_context():
-        models.db.create_all()
-
-    yield models.db
-
-    models.db.session.remove()
+    config = {
+        "SQLALCHEMY_DATABASE_URI": "sqlite:///" + db_fname,
+        "TESTING": True
+    }
+    
+    app = create_app(config)
+    
+    with app.app_context():
+        db.create_all()
+        
+    yield app
+    
     os.close(db_fd)
     os.unlink(db_fname)
 
@@ -53,26 +57,30 @@ def _get_score():
     return Score(
         throws=54,
         course=course,
-        player=player
+        player=player,
+        date=date.today()
     )
 
-def test_create_player(db_handle):
-    player = _get_player()
+def test_create_player(app):
+    with app.app_context():
+        player = _get_player()
 
-    db_handle.session.add(player)
-    db_handle.session.commit()
-    assert Player.query.count() == 1
+        db.session.add(player)
+        db.session.commit()
+        assert Player.query.count() == 1
 
-def test_create_score(db_handle):
-    score = _get_score()
+def test_create_score(app):
+    with app.app_context():
+        score = _get_score()
 
-    db_handle.session.add(score)
-    db_handle.session.commit()
-    assert Score.query.count() == 1
+        db.session.add(score)
+        db.session.commit()
+        assert Score.query.count() == 1
 
-def test_create_course(db_handle):
-    course = _get_course()
+def test_create_course(app):
+    with app.app_context():
+        course = _get_course()
 
-    db_handle.session.add(course)
-    db_handle.session.commit()
-    assert Course.query.count() == 1
+        db.session.add(course)
+        db.session.commit()
+        assert Course.query.count() == 1

@@ -4,17 +4,13 @@ from sqlalchemy.engine import Engine
 from sqlalchemy import event
 from sqlalchemy.exc import IntegrityError, OperationalError
 
-app = Flask(__name__, static_folder="static")
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///development.db"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-db = SQLAlchemy(app)
+from frolftracker import db
 
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor = dbapi_connection.cursor()
     cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
-
 
 class Player(db.Model):
 
@@ -33,6 +29,7 @@ class Score(db.Model):
     throws = db.Column(db.Integer, nullable=False)
     player_id = db.Column(db.ForeignKey("player.id", ondelete="CASCADE"), nullable=False)
     course_id = db.Column(db.ForeignKey("course.id", ondelete="CASCADE"), nullable=False)
+    date = db.Column(db.Date, nullable=False)
 
     course = db.relationship("Course", back_populates="scores")
     player = db.relationship("Player", back_populates="scores")
@@ -50,3 +47,5 @@ class Course(db.Model):
     def __repr__(self):
         return "{} <{}>".format(self.name, self.id)
 
+def init_db_command():
+    db.create_all()
