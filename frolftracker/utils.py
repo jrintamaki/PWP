@@ -86,7 +86,7 @@ class FrolftrackerBuilder(MasonBuilder):
 
     def add_control_delete_player(self, player):
         self.add_control(
-            "frolftracker:delete-player",
+            "frolftracker:delete",
             url_for("api.playeritem", player=player),
             method="DELETE",
             title="Delete this player"
@@ -114,7 +114,7 @@ class FrolftrackerBuilder(MasonBuilder):
 
     def add_control_delete_course(self, course):
         self.add_control(
-            "frolftracker:delete-course",
+            "frolftracker:delete",
             url_for("api.courseitem", course=course),
             method="DELETE",
             title="Delete this course"
@@ -142,7 +142,7 @@ class FrolftrackerBuilder(MasonBuilder):
 
     def add_control_delete_score(self, score):
         self.add_control(
-            "frolftracker:delete-score",
+            "frolftracker:delete",
             url_for("api.scoreitem", score=score),
             method="DELETE",
             title="Delete this score"
