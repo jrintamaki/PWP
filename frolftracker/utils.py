@@ -75,31 +75,124 @@ class MasonBuilder(dict):
 class FrolftrackerBuilder(MasonBuilder):
 
     def add_control_add_player(self, player):
-        pass
+        self.add_control(
+            "frolftracker:add-player",
+            url_for("api.playercollection", player=player),
+            method="POST",
+            encoding="json",
+            title="Add a new player",
+            schema=Player.get_schema()
+        )
 
     def add_control_delete_player(self, player):
-        pass
+        self.add_control(
+            "frolftracker:delete-player",
+            url_for("api.playeritem", player=player),
+            method="DELETE",
+            title="Delete this player"
+        )
 
     def add_control_modify_player(self, player):
-        pass
+        self.add_control(
+            "frolftracker:modify-player",
+            url_for("api.playeritem", player=player),
+            method="PUT",
+            encoding="json",
+            title="Edit this player",
+            schema=Player.get_schema()
+        )
 
     def add_control_add_course(self, course):
-        pass
+        self.add_control(
+            "frolftracker:add-course",
+            url_for("api.coursecollection", course=course),
+            method="POST",
+            encoding="json",
+            title="Add a new course",
+            schema=Course.get_schema()
+        )
 
     def add_control_delete_course(self, course):
-        pass
+        self.add_control(
+            "frolftracker:delete-course",
+            url_for("api.courseitem", course=course),
+            method="DELETE",
+            title="Delete this course"
+        )
 
     def add_control_modify_course(self, course):
-        pass
+        self.add_control(
+            "frolftracker:modify-course",
+            url_for("api.courseitem", course=course),
+            method="PUT",
+            encoding="json",
+            title="Edit this course",
+            schema=Course.get_schema()
+        )
 
     def add_control_add_score(self, score):
-        pass
+        self.add_control(
+            "frolftracker:add-score",
+            url_for("api.scorecollection", score=score),
+            method="POST",
+            encoding="json",
+            title="Add a new score",
+            schema=Score.get_schema()
+        )
 
     def add_control_delete_score(self, score):
-        pass
+        self.add_control(
+            "frolftracker:delete-score",
+            url_for("api.scoreitem", score=score),
+            method="DELETE",
+            title="Delete this score"
+        )
 
     def add_control_modify_score(self, score):
-        pass
+        self.add_control(
+            "frolftracker:modify-score",
+            url_for("api.scoreitem", score=score),
+            method="PUT",
+            encoding="json",
+            title="Edit this score",
+            schema=Score.get_schema()
+        )
+
+    def add_control_get_scores_by_player(self, player):
+        base_uri = url_for("api.scorecollection", player=player),
+        uri = base_uri + "?start={index}"
+        self.add_control(
+            "frolftracker:scores",
+            uri,
+            isHrefTemplate=True,
+            schema=self._paginator_schema()
+        )
+
+    def add_control_get_scores_by_course(self, course):
+        base_uri = url_for("api.scorecollection", course=course),
+        uri = base_uri + "?start={index}"
+        self.add_control(
+            "frolftracker:scores",
+            uri,
+            isHrefTemplate=True,
+            schema=self._paginator_schema()
+        )
+
+
+    @staticmethod
+    def _paginator_schema():
+        schema = {
+            "type": "object",
+            "properties": {},
+            "required": []
+        }
+        props = schema["properties"]
+        props["index"] = {
+            "description": "Starting index for pagination",
+            "type": "integer",
+            "default": "0"
+        }
+        return schema
 
 
 def create_error_response(status_code, title, message=None):

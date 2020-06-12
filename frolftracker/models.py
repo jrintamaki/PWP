@@ -22,6 +22,9 @@ class Player(db.Model):
     def __repr__(self):
         return "{} <{}>".format(self.name, self.id)
 
+    def get_schema():
+        schema = {}
+        return schema
 
 class Score(db.Model):
 
@@ -34,6 +37,9 @@ class Score(db.Model):
     course = db.relationship("Course", back_populates="scores", uselist=False)
     player = db.relationship("Player", back_populates="scores", uselist=False)
 
+    def get_schema():
+        schema = {}
+        return schema
 
 class Course(db.Model):
 
@@ -46,6 +52,10 @@ class Course(db.Model):
 
     def __repr__(self):
         return "{} <{}>".format(self.name, self.id)
+
+    def get_schema():
+        schema = {}
+        return schema
 
 def init_db_command():
     db.create_all()
