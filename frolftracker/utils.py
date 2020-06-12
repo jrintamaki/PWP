@@ -76,7 +76,7 @@ class FrolftrackerBuilder(MasonBuilder):
 
     def add_control_add_player(self, player):
         self.add_control(
-            "frolftracker:add-player",
+            "frolf:add-player",
             url_for("api.playercollection", player=player),
             method="POST",
             encoding="json",
@@ -86,7 +86,7 @@ class FrolftrackerBuilder(MasonBuilder):
 
     def add_control_delete_player(self, player):
         self.add_control(
-            "frolftracker:delete",
+            "frolf:delete",
             url_for("api.playeritem", player=player),
             method="DELETE",
             title="Delete this player"
@@ -94,7 +94,7 @@ class FrolftrackerBuilder(MasonBuilder):
 
     def add_control_modify_player(self, player):
         self.add_control(
-            "frolftracker:modify-player",
+            "frolf:modify-player",
             url_for("api.playeritem", player=player),
             method="PUT",
             encoding="json",
@@ -104,7 +104,7 @@ class FrolftrackerBuilder(MasonBuilder):
 
     def add_control_add_course(self, course):
         self.add_control(
-            "frolftracker:add-course",
+            "frolf:add-course",
             url_for("api.coursecollection", course=course),
             method="POST",
             encoding="json",
@@ -114,7 +114,7 @@ class FrolftrackerBuilder(MasonBuilder):
 
     def add_control_delete_course(self, course):
         self.add_control(
-            "frolftracker:delete",
+            "frolf:delete",
             url_for("api.courseitem", course=course),
             method="DELETE",
             title="Delete this course"
@@ -122,7 +122,7 @@ class FrolftrackerBuilder(MasonBuilder):
 
     def add_control_modify_course(self, course):
         self.add_control(
-            "frolftracker:modify-course",
+            "frolf:modify-course",
             url_for("api.courseitem", course=course),
             method="PUT",
             encoding="json",
@@ -132,7 +132,7 @@ class FrolftrackerBuilder(MasonBuilder):
 
     def add_control_add_score(self, score):
         self.add_control(
-            "frolftracker:add-score",
+            "frolf:add-score",
             url_for("api.scorecollection", score=score),
             method="POST",
             encoding="json",
@@ -142,7 +142,7 @@ class FrolftrackerBuilder(MasonBuilder):
 
     def add_control_delete_score(self, score):
         self.add_control(
-            "frolftracker:delete",
+            "frolf:delete",
             url_for("api.scoreitem", score=score),
             method="DELETE",
             title="Delete this score"
@@ -150,7 +150,7 @@ class FrolftrackerBuilder(MasonBuilder):
 
     def add_control_modify_score(self, score):
         self.add_control(
-            "frolftracker:modify-score",
+            "frolf:modify-score",
             url_for("api.scoreitem", score=score),
             method="PUT",
             encoding="json",
@@ -162,7 +162,7 @@ class FrolftrackerBuilder(MasonBuilder):
         base_uri = url_for("api.scorecollection", player=player),
         uri = base_uri + "?start={index}"
         self.add_control(
-            "frolftracker:scores",
+            "frolf:scores",
             uri,
             isHrefTemplate=True,
             schema=self._paginator_schema()
@@ -172,7 +172,7 @@ class FrolftrackerBuilder(MasonBuilder):
         base_uri = url_for("api.scorecollection", course=course),
         uri = base_uri + "?start={index}"
         self.add_control(
-            "frolftracker:scores",
+            "frolf:scores",
             uri,
             isHrefTemplate=True,
             schema=self._paginator_schema()
