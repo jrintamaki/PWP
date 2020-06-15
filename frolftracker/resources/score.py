@@ -22,10 +22,10 @@ class ScoreCollection(Resource):
                 id=db_score.id,
                 throws=db_score.throws,
                 date=db_score.date,
-                player_id=db_score.palyer_id,
+                player_id=db_score.player_id,
                 course_id=db_score.course_id,
             )
-            item.add_control("self", url_for("api.scoreitem", score=db_score.id))
+            item.add_control("self", url_for("api.scoreitem", score_id=db_score.id))
             item.add_control("profile", SCORE_PROFILE)
             body["items"].append(item)
 

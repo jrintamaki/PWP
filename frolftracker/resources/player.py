@@ -19,8 +19,7 @@ class PlayerCollection(Resource):
         body["items"] = []
         for db_player in Player.query.all():
             item = FrolftrackerBuilder(
-                name=db_player.name,
-                scores=db_player.scores
+                name=db_player.name
             )
             item.add_control("self", url_for("api.playeritem", player_id=db_player.id))
             item.add_control("profile", PLAYER_PROFILE)
@@ -69,7 +68,7 @@ class PlayerItem(Resource):
                 "No player found with the id {}".format(player_id)
             )
 
-        body = FrolftrackerBuilder(player_id=db_player.id, name=db_player.name, scores=db_player.scores)
+        body = FrolftrackerBuilder(player_id=db_player.id, name=db_player.name)
         body.add_namespace("frolf", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.playeritem", player_id=player_id))
         body.add_control("profile", PLAYER_PROFILE)

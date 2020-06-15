@@ -74,7 +74,7 @@ class CourseItem(Resource):
                 "No course found with the id {}".format(course_id)
             )
 
-        body = FrolftrackerBuilder(corse=db_course.id, name=db_course.name, scores=db_course.scores)
+        body = FrolftrackerBuilder(course_id=db_course.id, name=db_course.name)
         body.add_namespace("frolf", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.courseitem", course_id=course_id))
         body.add_control("profile", COURSE_PROFILE)

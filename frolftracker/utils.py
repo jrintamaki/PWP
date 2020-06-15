@@ -159,7 +159,7 @@ class FrolftrackerBuilder(MasonBuilder):
         )
 
     def add_control_get_scores_by_player(self, player_id):
-        base_uri = url_for("api.scorecollection", player_id=player_id),
+        base_uri = url_for("api.scorecollection", player_id=player_id)
         uri = base_uri + "?start={index}"
         self.add_control(
             "frolf:scores",
@@ -169,7 +169,7 @@ class FrolftrackerBuilder(MasonBuilder):
         )
 
     def add_control_get_scores_by_course(self, course_id):
-        base_uri = url_for("api.scorecollection", course_id=course_id),
+        base_uri = url_for("api.scorecollection", course_id=course_id)
         uri = base_uri + "?start={index}"
         self.add_control(
             "frolf:scores",

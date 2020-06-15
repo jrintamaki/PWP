@@ -62,7 +62,7 @@ class Score(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     throws = db.Column(db.Integer, nullable=False)
-    date = db.Column(db.Date, nullable=False)
+    date = db.Column(db.String, nullable=False)
     player_id = db.Column(db.ForeignKey("player.id", ondelete="CASCADE"), nullable=False)
     course_id = db.Column(db.ForeignKey("course.id", ondelete="CASCADE"), nullable=False)
 
