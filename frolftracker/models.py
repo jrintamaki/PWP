@@ -32,7 +32,7 @@ class Player(db.Model):
     def get_schema():
         schema = {
             "type": "object",
-            "required": "name"
+            "required": ["name"]
         }
         properties = schema["properties"] = {}
         properties["id"] = {
