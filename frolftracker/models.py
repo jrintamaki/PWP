@@ -22,8 +22,18 @@ class Player(db.Model):
     def __repr__(self):
         return "{} <{}>".format(self.name, self.id)
 
+    @staticmethod
     def get_schema():
-        schema = {}
+        schema = {
+            "type": "object",
+            "required": "name"
+        }
+        properties = schema["properties"] = {}
+        properties["name"] = {
+            "description": "Player's name",
+            "type": "string"
+        }
+
         return schema
 
 class Score(db.Model):
@@ -37,8 +47,30 @@ class Score(db.Model):
     course = db.relationship("Course", back_populates="scores", uselist=False)
     player = db.relationship("Player", back_populates="scores", uselist=False)
 
+    @staticmethod
     def get_schema():
-        schema = {}
+        schema = {
+            "type": "object",
+            "required": ["throws", "date", "player_id", "course_id"]
+        }
+        properties = schema["properties"] = {}
+        properties["throws"] = {
+            "description": "Total strokes on this round",
+            "type": "integer"
+        }
+        properties["date"] = {
+            "description": "Date this round was played",
+            "type": "string",
+            "pattern": "^[0-9]{4}-[01][0-9]-[0-3][0-9]" #TODO: check that this works
+        }
+        properties["player_id"] = {
+            "description": "ID of the player",
+            "type": "integer"
+        }
+        properties["course_id"] = {
+            "description": "ID of the course",
+            "type": "integer"
+        }
         return schema
 
 class Course(db.Model):
@@ -53,8 +85,26 @@ class Course(db.Model):
     def __repr__(self):
         return "{} <{}>".format(self.name, self.id)
 
+    @staticmethod
     def get_schema():
-        schema = {}
+        schema = {
+            "type": "object",
+            "required": ["name", "num_holes", "par"]
+        }
+        properties = schema["properties"] = {}
+        properties["name"] = {
+            "description": "Name of this course",
+            "type": "string"
+        }
+        properties["num_holes"] = {
+            "description": "Number of holes on this course",
+            "type": "integer"
+        }
+        properties["par"] = {
+            "description": "Par score of this course",
+            "type": "integer"
+        }
+
         return schema
 
 def init_db_command():
