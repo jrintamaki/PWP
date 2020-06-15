@@ -13,6 +13,11 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor.close()
 
 class Player(db.Model):
+''' Database model of a frolf player.
+    Attributes:
+    id : database id, primary key
+    name : name of the player
+    scores : all scores by this player '''
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
@@ -29,6 +34,10 @@ class Player(db.Model):
             "required": "name"
         }
         properties = schema["properties"] = {}
+        properties["id"] = {
+            "description": "Database ID of this player",
+            "type": "integer"
+        }
         properties["name"] = {
             "description": "Player's name",
             "type": "string"
@@ -38,12 +47,21 @@ class Player(db.Model):
         return schema
 
 class Score(db.Model):
+''' Database model of a round score.
+    Attributes:
+    id : database id, primary key
+    throws : number of strokes on this score
+    date : date this score was played on
+    player_id : ID of the player, foreign key
+    course_id : ID of the course, foreign key
+    course : course this score was played on
+    player : player who played this score '''
 
     id = db.Column(db.Integer, primary_key=True)
     throws = db.Column(db.Integer, nullable=False)
+    date = db.Column(db.Date, nullable=False)
     player_id = db.Column(db.ForeignKey("player.id", ondelete="CASCADE"), nullable=False)
     course_id = db.Column(db.ForeignKey("course.id", ondelete="CASCADE"), nullable=False)
-    date = db.Column(db.Date, nullable=False)
 
     course = db.relationship("Course", back_populates="scores", uselist=False)
     player = db.relationship("Player", back_populates="scores", uselist=False)
@@ -55,6 +73,10 @@ class Score(db.Model):
             "required": ["throws", "date", "player_id", "course_id"]
         }
         properties = schema["properties"] = {}
+        properties["id"] = {
+            "description": "ID of this score",
+            "type": "integer"
+        }
         properties["throws"] = {
             "description": "Total strokes on this round",
             "type": "integer"
@@ -78,6 +100,13 @@ class Score(db.Model):
         return schema
 
 class Course(db.Model):
+''' Database model of a frolf course.
+    Attributes:
+    id : database id, primary key
+    name : name of the course
+    num_holes : the number of holes on the course
+    par : par score of the course 
+    scores : all scores played on this course '''
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False, unique=True)
@@ -96,6 +125,10 @@ class Course(db.Model):
             "required": ["name"]
         }
         properties = schema["properties"] = {}
+        properties["id"] = {
+            "description": "Database ID of this course",
+            "type": "integer"
+        }
         properties["name"] = {
             "description": "Name of this course",
             "type": "string"
