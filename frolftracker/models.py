@@ -33,6 +33,7 @@ class Player(db.Model):
             "description": "Player's name",
             "type": "string"
         }
+        # TODO: scores
 
         return schema
 
@@ -71,6 +72,9 @@ class Score(db.Model):
             "description": "ID of the course",
             "type": "integer"
         }
+
+        # TODO: player, course
+ 
         return schema
 
 class Course(db.Model):
@@ -89,7 +93,7 @@ class Course(db.Model):
     def get_schema():
         schema = {
             "type": "object",
-            "required": ["name", "num_holes", "par"]
+            "required": ["name"]
         }
         properties = schema["properties"] = {}
         properties["name"] = {
@@ -104,6 +108,8 @@ class Course(db.Model):
             "description": "Par score of this course",
             "type": "integer"
         }
+
+        #TODO: scores
 
         return schema
 
