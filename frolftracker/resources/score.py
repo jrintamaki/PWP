@@ -11,8 +11,25 @@ from frolftracker.utils import create_error_response, FrolftrackerBuilder
 class ScoreCollection(Resource):
     
     def get(self):
-        pass
+        body = FrolftrackerBuilder()
 
+        body.add_namespace("frolf", LINK_RELATIONS_URL)
+        body.add_control("self", url_for("api.scorecollection"))
+        body.add_control_add_score()
+        body["items"] = []
+        for db_score in Score.query.all():
+            item = FrolftrackerBuilder(
+                id=db_score.id,
+                throws=db_score.throws,
+                date=db_score.date,
+                player_id=db_score.palyer_id,
+                course_id=db_score.course_id,
+            )
+            item.add_control("self", url_for("api.scoreitem", score=db_score.id))
+            item.add_control("profile", SCORE_PROFILE)
+            body["items"].append(item)
+
+        return Response(json.dumps(body), 200, mimetype=MASON)
 
     def post(self):
         if not request.json:
@@ -22,24 +39,23 @@ class ScoreCollection(Resource):
             )
 
         try:
-            validate(request.json, Sensor.get_schema())
+            validate(request.json, Score.get_schema())
         except ValidationError as e:
             return create_error_response(400, "Invalid JSON document", str(e))
 
         player = Player.query.filter_by(id=request.json["player_id"]).first()
-        if db_player is None:
+        if player is None:
             return create_error_response(
                 404, "Not found",
                 "No player found with the id {}".format(request.json["player_id"])
             )
 
         course = Course.query.filter_by(id=request.json["course_id"]).first()
-        if db_course is None:
+        if course is None:
             return create_error_response(
                 404, "Not found",
                 "No course found with the id {}".format(request.json["course_id"])
             )
-
 
         score = Score(
             throws=request.json["throws"],
@@ -56,7 +72,7 @@ class ScoreCollection(Resource):
         except IntegrityError:
             return create_error_response(
                 500, "Score",
-                "Something went wrong :(")
+                "Something went wrong :("
             )
 
         return Response(status=201, headers={
@@ -98,14 +114,14 @@ class ScoreItem(Resource):
             return create_error_response(400, "Invalid JSON document", str(e))
 
         player = Player.query.filter_by(id=request.json["player_id"]).first()
-        if db_player is None:
+        if player is None:
             return create_error_response(
                 404, "Not found",
                 "No player found with the id {}".format(request.json["player_id"])
             )
 
         course = Course.query.filter_by(id=request.json["course_id"]).first()
-        if db_course is None:
+        if course is None:
             return create_error_response(
                 404, "Not found",
                 "No course found with the id {}".format(request.json["course_id"])
@@ -129,4 +145,12 @@ class ScoreItem(Resource):
         return Response(status=204)
 
     def delete(self, score_id):
-        pass
+        db_score = Score.query.filter_by(id=score_id).first()
+        if db_score is None:
+            return create_error_response(
+                404, "Not found",
+                "No score found with the id {}".format(score_id)
+            )
+
+        db.session.delete(db_score)
+        return Response(status=204)

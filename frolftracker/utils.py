@@ -74,92 +74,92 @@ class MasonBuilder(dict):
 
 class FrolftrackerBuilder(MasonBuilder):
 
-    def add_control_add_player(self, player):
+    def add_control_add_player(self):
         self.add_control(
             "frolf:add-player",
-            url_for("api.playercollection", player=player),
+            url_for("api.playercollection"),
             method="POST",
             encoding="json",
             title="Add a new player",
             schema=Player.get_schema()
         )
 
-    def add_control_delete_player(self, player):
+    def add_control_delete_player(self, player_id):
         self.add_control(
             "frolf:delete",
-            url_for("api.playeritem", player=player),
+            url_for("api.playeritem", player_id=player_id),
             method="DELETE",
             title="Delete this player"
         )
 
-    def add_control_modify_player(self, player):
+    def add_control_modify_player(self, player_id):
         self.add_control(
             "frolf:modify-player",
-            url_for("api.playeritem", player=player),
+            url_for("api.playeritem", player_id=player_id),
             method="PUT",
             encoding="json",
             title="Edit this player",
             schema=Player.get_schema()
         )
 
-    def add_control_add_course(self, course):
+    def add_control_add_course(self):
         self.add_control(
             "frolf:add-course",
-            url_for("api.coursecollection", course=course),
+            url_for("api.coursecollection"),
             method="POST",
             encoding="json",
             title="Add a new course",
             schema=Course.get_schema()
         )
 
-    def add_control_delete_course(self, course):
+    def add_control_delete_course(self, course_id):
         self.add_control(
             "frolf:delete",
-            url_for("api.courseitem", course=course),
+            url_for("api.courseitem", course_id=course_id),
             method="DELETE",
             title="Delete this course"
         )
 
-    def add_control_modify_course(self, course):
+    def add_control_modify_course(self, course_id):
         self.add_control(
             "frolf:modify-course",
-            url_for("api.courseitem", course=course),
+            url_for("api.courseitem", course_id=course_id),
             method="PUT",
             encoding="json",
             title="Edit this course",
             schema=Course.get_schema()
         )
 
-    def add_control_add_score(self, score):
+    def add_control_add_score(self):
         self.add_control(
             "frolf:add-score",
-            url_for("api.scorecollection", score=score),
+            url_for("api.scorecollection"),
             method="POST",
             encoding="json",
             title="Add a new score",
             schema=Score.get_schema()
         )
 
-    def add_control_delete_score(self, score):
+    def add_control_delete_score(self, score_id):
         self.add_control(
             "frolf:delete",
-            url_for("api.scoreitem", score=score),
+            url_for("api.scoreitem", score_id=score_id),
             method="DELETE",
             title="Delete this score"
         )
 
-    def add_control_modify_score(self, score):
+    def add_control_modify_score(self, score_id):
         self.add_control(
             "frolf:modify-score",
-            url_for("api.scoreitem", score=score),
+            url_for("api.scoreitem", score_id=score_id),
             method="PUT",
             encoding="json",
             title="Edit this score",
             schema=Score.get_schema()
         )
 
-    def add_control_get_scores_by_player(self, player):
-        base_uri = url_for("api.scorecollection", player=player),
+    def add_control_get_scores_by_player(self, player_id):
+        base_uri = url_for("api.scorecollection", player_id=player_id),
         uri = base_uri + "?start={index}"
         self.add_control(
             "frolf:scores",
@@ -168,8 +168,8 @@ class FrolftrackerBuilder(MasonBuilder):
             schema=self._paginator_schema()
         )
 
-    def add_control_get_scores_by_course(self, course):
-        base_uri = url_for("api.scorecollection", course=course),
+    def add_control_get_scores_by_course(self, course_id):
+        base_uri = url_for("api.scorecollection", course_id=course_id),
         uri = base_uri + "?start={index}"
         self.add_control(
             "frolf:scores",

@@ -11,7 +11,22 @@ from frolftracker.utils import create_error_response, FrolftrackerBuilder
 class PlayerCollection(Resource):
     
     def get(self):
-        pass
+        body = FrolftrackerBuilder()
+
+        body.add_namespace("frolf", LINK_RELATIONS_URL)
+        body.add_control("self", url_for("api.playercollection"))
+        body.add_control_add_player()
+        body["items"] = []
+        for db_player in Player.query.all():
+            item = FrolftrackerBuilder(
+                name=db_player.name,
+                scores=db_player.scores
+            )
+            item.add_control("self", url_for("api.playeritem", player_id=db_player.id))
+            item.add_control("profile", PLAYER_PROFILE)
+            body["items"].append(item)
+
+        return Response(json.dumps(body), 200, mimetype=MASON)
 
 
     def post(self):
@@ -93,4 +108,15 @@ class PlayerItem(Resource):
 
 
     def delete(self, player_id):
-        pass
+        db_player = Player.query.filter_by(id=player_id).first()
+        if db_player is None:
+            return create_error_response(
+                404, "Not found",
+                "No player found with the id {}".format(player_id)
+            )
+
+        db.session.delete(db_player)
+        db.session.commit()
+
+        return Response(status=204)
+

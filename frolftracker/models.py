@@ -13,12 +13,13 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor.close()
 
 class Player(db.Model):
-''' Database model of a frolf player.
+    '''
+    Database model of a frolf player.
     Attributes:
     id : database id, primary key
     name : name of the player
-    scores : all scores by this player '''
-
+    scores : all scores by this player
+    '''
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
 
@@ -47,7 +48,8 @@ class Player(db.Model):
         return schema
 
 class Score(db.Model):
-''' Database model of a round score.
+    '''
+    Database model of a round score.
     Attributes:
     id : database id, primary key
     throws : number of strokes on this score
@@ -55,7 +57,8 @@ class Score(db.Model):
     player_id : ID of the player, foreign key
     course_id : ID of the course, foreign key
     course : course this score was played on
-    player : player who played this score '''
+    player : player who played this score 
+    '''
 
     id = db.Column(db.Integer, primary_key=True)
     throws = db.Column(db.Integer, nullable=False)
@@ -100,13 +103,15 @@ class Score(db.Model):
         return schema
 
 class Course(db.Model):
-''' Database model of a frolf course.
+    ''' 
+    Database model of a frolf course.
     Attributes:
     id : database id, primary key
     name : name of the course
     num_holes : the number of holes on the course
     par : par score of the course 
-    scores : all scores played on this course '''
+    scores : all scores played on this course
+    '''
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False, unique=True)

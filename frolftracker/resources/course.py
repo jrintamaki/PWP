@@ -11,8 +11,23 @@ from frolftracker.utils import create_error_response, FrolftrackerBuilder
 class CourseCollection(Resource):
     
     def get(self):
-        pass
+        body = FrolftrackerBuilder()
 
+        body.add_namespace("frolf", LINK_RELATIONS_URL)
+        body.add_control("self", url_for("api.coursecollection"))
+        body.add_control_add_course()
+        body["items"] = []
+        for db_course in Course.query.all():
+            item = FrolftrackerBuilder(
+                name=db_course.name,
+                num_holes=db_course.num_holes,
+                par=db_course.par
+            )
+            item.add_control("self", url_for("api.courseitem", course_id=db_course.id))
+            item.add_control("profile", COURSE_PROFILE)
+            body["items"].append(item)
+
+        return Response(json.dumps(body), 200, mimetype=MASON)
 
     def post(self):
         if not request.json:
@@ -105,7 +120,7 @@ class CourseItem(Resource):
         return Response(status=204)
 
 
-    def delete(self, id):
+    def delete(self, course_id):
         db_course = Course.query.filter_by(id=course_id).first()
         if db_course is None:
             return create_error_response(
@@ -113,5 +128,6 @@ class CourseItem(Resource):
                 "No course found with the id {}".format(course_id)
             )
 
-        
+        db.session.delete(db_course)
+        return Response(status=204)
 
