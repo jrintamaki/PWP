@@ -1,8 +1,9 @@
 import os
-from flask import Flask
+from flask import Flask, Response, url_for
 from flask_sqlalchemy import SQLAlchemy
-from frolftracker.constants import *
+import json
 
+from frolftracker.constants import *
 
 db = SQLAlchemy()
 
@@ -31,4 +32,18 @@ def create_app(test_config=None):
     from . import api
     app.register_blueprint(api.api_bp)
     
+    @app.route("/api/")
+    def entry():
+        return "tomi pls fix"
+
+    @app.route("/profiles/<profile>/")
+    def send_profile(profile):
+        return "tomi pls fix"
+    
+    @app.route(LINK_RELATIONS_URL)
+    def send_link_relations():
+        return "tomi pls fix"
+
+
+
     return app
