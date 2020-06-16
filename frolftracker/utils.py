@@ -159,12 +159,20 @@ class FrolftrackerBuilder(MasonBuilder):
         )
 
     def add_control_get_scores_by_player(self, player_id):
-        pass
-        # TODO
+        self.add_control(
+            "frolf:scores-by",
+            url_for("api.scorecollection", player_id=player_id),
+            method="GET",
+            title="All scores by this player"
+        )
 
     def add_control_get_scores_by_course(self, course_id):
-        pass
-        # TODO
+        self.add_control(
+            "frolf:scores-by",
+            url_for("api.scorecollection", course_id=course_id),
+            method="GET",
+            title="All scores on this course"
+        )
 
 def create_error_response(status_code, title, message=None):
     resource_url = request.path

@@ -10,14 +10,33 @@ from frolftracker.utils import create_error_response, FrolftrackerBuilder
 
 class ScoreCollection(Resource):
     
-    def get(self):
+    def get(self, player_id=None, course_id=None):
         body = FrolftrackerBuilder()
 
         body.add_namespace("frolf", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.scorecollection"))
         body.add_control_add_score()
         body["items"] = []
-        for db_score in Score.query.all():
+
+        # Sorry for spaghetti-o's
+        if course_id is None and player_id is None:
+            query = Score.query.all()
+        elif course_id is not None and player_id is not None:
+            player = Player.query.filter_by(id=player_id).first()
+            query = player.scores.query.filter_by(course_id=course_id).all()
+        elif course_id is not None:
+            course = Course.query.filter_by(id=course_id).first()
+            query = course.scores
+        elif player_id is not None:
+            player = Player.query.filter_by(id=player_id).first()
+            query = player.scores
+        else:
+            return create_error_response(
+                500, "TODO",
+                "TODO"
+            )
+
+        for db_score in query:
             item = FrolftrackerBuilder(
                 id=db_score.id,
                 throws=db_score.throws,

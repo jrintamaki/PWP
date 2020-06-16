@@ -131,3 +131,4 @@ class CourseItem(Resource):
         db.session.delete(db_course)
         return Response(status=204)
 
+
