@@ -6,9 +6,13 @@ Frolf Tracker
 * Student 2. Julius Rintamäki, @student.oulu.fi
 * Student 3. Ville Karsikko, @student.oulu
 
-# Installation and execution:
+# Dependencies
+See requirements.txt
+
+# Setup
 > pip install -e .
 
+# Execution
 > export FLASK_APP=frolftracker
 
 > export FLASK_ENV=development
