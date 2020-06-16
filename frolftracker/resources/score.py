@@ -94,6 +94,8 @@ class ScoreItem(Resource):
         body.add_control("self", url_for("api.scoreitem", score_id=score_id))
         body.add_control("profile", SCORE_PROFILE)
         body.add_control("collection", url_for("api.scorecollection"))
+        body.add_control("player", url_for("api.playeritem", player_id=db_score.player_id))
+        body.add_control("course", url_for("api.courseitem", course_id=db_score.course_id))
         body.add_control_delete_score(score_id)
         body.add_control_modify_score(score_id)
 

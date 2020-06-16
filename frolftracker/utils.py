@@ -159,41 +159,12 @@ class FrolftrackerBuilder(MasonBuilder):
         )
 
     def add_control_get_scores_by_player(self, player_id):
-        base_uri = url_for("api.scorecollection", player_id=player_id)
-        uri = base_uri + "?start={index}"
-        self.add_control(
-            "frolf:scores",
-            uri,
-            isHrefTemplate=True,
-            schema=self._paginator_schema()
+        # TODO
         )
 
     def add_control_get_scores_by_course(self, course_id):
-        base_uri = url_for("api.scorecollection", course_id=course_id)
-        uri = base_uri + "?start={index}"
-        self.add_control(
-            "frolf:scores",
-            uri,
-            isHrefTemplate=True,
-            schema=self._paginator_schema()
+        # TODO
         )
-
-
-    @staticmethod
-    def _paginator_schema():
-        schema = {
-            "type": "object",
-            "properties": {},
-            "required": []
-        }
-        props = schema["properties"]
-        props["index"] = {
-            "description": "Starting index for pagination",
-            "type": "integer",
-            "default": "0"
-        }
-        return schema
-
 
 def create_error_response(status_code, title, message=None):
     resource_url = request.path
