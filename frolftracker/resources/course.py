@@ -45,9 +45,9 @@ class CourseCollection(Resource):
             name=request.json["name"],
         )
 
-        if request.json["num_holes"]:
+        if "num_holes" in request.json:
             course.num_holes = request.json["num_holes"]
-        if request.json["par"]:
+        if "par" in request.json:
             course.par = request.json["par"]
 
         try:
