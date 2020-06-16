@@ -159,12 +159,12 @@ class FrolftrackerBuilder(MasonBuilder):
         )
 
     def add_control_get_scores_by_player(self, player_id):
+        pass
         # TODO
-        )
 
     def add_control_get_scores_by_course(self, course_id):
+        pass
         # TODO
-        )
 
 def create_error_response(status_code, title, message=None):
     resource_url = request.path
