@@ -84,9 +84,9 @@ def _check_namespace(client, response):
     that its "name" attribute is a URL that can be accessed.
     """
 
-ns_href = response["@namespaces"]["frolf"]["name"]
-resp = client.get(ns_href)
-assert resp.status_code == 200
+    ns_href = response["@namespaces"]["frolf"]["name"]
+    resp = client.get(ns_href)
+    assert resp.status_code == 200
 
 def _check_control_get_method(ctrl, client, obj):
     """
