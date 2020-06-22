@@ -78,6 +78,15 @@ def _get_player_json(number=1):
     
     return {"name": "extra-player-{}".format(number)}
 
+def _get_course_json(number=1):
+    """
+    Creates a valid course JSON object to be used for PUT and POST tests.
+    """
+    
+    return {"name": "extra-course-{}".format(number),
+            "num_holes": number * 10,
+            "par": number * 30}
+
 def _check_namespace(client, response):
     """
     Checks that the "frolf" namespace is found from the response body, and
@@ -111,7 +120,7 @@ def _check_control_delete_method(ctrl, client, obj):
     resp = client.delete(href)
     assert resp.status_code == 204
 
-def _check_control_put_method_player(ctrl, client, obj):
+def _check_control_put_method(ctrl, client, obj, body_get_func):
     """
     Checks a PUT type control from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
@@ -128,13 +137,13 @@ def _check_control_put_method_player(ctrl, client, obj):
     schema = ctrl_obj["schema"]
     assert method == "put"
     assert encoding == "json"
-    body = _get_player_json()
+    body = body_get_func()
     body["name"] = obj["name"]
     validate(body, schema)
     resp = client.put(href, json=body)
     assert resp.status_code == 204
     
-def _check_control_post_method_player(ctrl, client, obj):
+def _check_control_post_method(ctrl, client, obj, body_get_func):
     """
     Checks a POST type control from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
@@ -151,10 +160,11 @@ def _check_control_post_method_player(ctrl, client, obj):
     schema = ctrl_obj["schema"]
     assert method == "post"
     assert encoding == "json"
-    body = _get_player_json()
+    body = body_get_func()
     validate(body, schema)
     resp = client.post(href, json=body)
     assert resp.status_code == 201
+
 
 class TestPlayerCollection(object):
     """
@@ -177,7 +187,7 @@ class TestPlayerCollection(object):
         body = json.loads(resp.data)
         _check_namespace(client, body)
         _check_control_get_method("self", client, body)
-        _check_control_post_method_player("frolf:add-player", client, body)
+        _check_control_post_method("frolf:add-player", client, body, _get_player_json)
         assert len(body["items"]) == 4
         for item in body["items"]:
             _check_control_get_method("self", client, item)
@@ -237,7 +247,7 @@ class TestPlayerItem(object):
         _check_control_get_method("profile", client, body)
         _check_control_get_method("collection", client, body)
         _check_control_get_method("frolf:scores-by", client, body)
-        _check_control_put_method_player("edit", client, body)
+        _check_control_put_method("edit", client, body, _get_player_json)
         _check_control_delete_method("frolf:delete", client, body)
         resp = client.get(self.INVALID_URL)
         assert resp.status_code == 404
@@ -296,5 +306,150 @@ class TestPlayerItem(object):
         assert resp.status_code == 404
         
         
+class TestCourseCollection(object):
+    """
+    This class implements tests for each HTTP method in course collection
+    resource. 
+    """
+    
+    RESOURCE_URL = "/api/courses/"
+
+    def test_get(self, client):
+        """
+        Tests the GET method. Checks that the response status code is 200, and
+        then checks that all of the expected attributes and controls are
+        present, and the controls work. Also checks that all of the items from
+        the DB population are present, and their controls.
+        """
+        
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        _check_namespace(client, body)
+        _check_control_get_method("self", client, body)
+        _check_control_post_method("frolf:add-course", client, body, _get_course_json)
+        assert len(body["items"]) == 4
+        for item in body["items"]:
+            _check_control_get_method("self", client, item)
+            _check_control_get_method("profile", client, item)
+            assert "name" in item
+            assert "num_holes" in item
+            assert "par" in item
+
+
+    def test_post(self, client):
+        """
+        Tests the POST method. Checks all of the possible error codes, and 
+        also checks that a valid request receives a 201 response with a 
+        location header that leads into the newly created resource.
+        """
+        
+        valid = _get_course_json()
+        
+        # test with wrong content type
+        resp = client.post(self.RESOURCE_URL, data=json.dumps(valid))
+        assert resp.status_code == 415
+        
+        # test with valid and see that it exists afterward
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 201
+        print(resp.headers["Location"])
+        assert resp.headers["Location"].endswith(self.RESOURCE_URL + "5" + "/")
+        resp = client.get(resp.headers["Location"])
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert body["name"] == "extra-course-1"
+        
+        # send same data again for 409
+        # resp = client.post(self.RESOURCE_URL, json=valid)
+        # assert resp.status_code == 409
+        
+        # create invalid request body for 400
+        valid.pop("name")
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 400
+
+class TestCourseItem(object):
+    
+    RESOURCE_URL = "/api/courses/1/"
+    INVALID_URL = "/api/courses/999/"
+    
+    def test_get(self, client):
+        """
+        Tests the GET method. Checks that the response status code is 200, and
+        then checks that all of the expected attributes and controls are
+        present, and the controls work. Also checks that all of the items from
+        the DB popluation are present, and their controls.
+        """
+
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert body["name"] == "test-course-0"
+        _check_namespace(client, body)
+        _check_control_get_method("profile", client, body)
+        _check_control_get_method("collection", client, body)
+        _check_control_get_method("frolf:scores-by", client, body)
+        _check_control_put_method("edit", client, body, _get_course_json)
+        _check_control_delete_method("frolf:delete", client, body)
+        resp = client.get(self.INVALID_URL)
+        assert resp.status_code == 404
+
+    def test_put(self, client):
+        """
+        Tests the PUT method. Checks all of the possible erroe codes, and also
+        checks that a valid request receives a 204 response. Also tests that
+        when name is changed, the sensor can be found from a its new URI. 
+        """
+        
+        valid = _get_course_json()
+        
+        # test with wrong content type
+        resp = client.put(self.RESOURCE_URL, data=json.dumps(valid))
+        assert resp.status_code == 415
+        
+        resp = client.put(self.INVALID_URL, json=valid)
+        assert resp.status_code == 404
+        
+        # test with another sensor's name
+        #valid["name"] = "test-sensor-2"
+        #resp = client.put(self.RESOURCE_URL, json=valid)
+        #assert resp.status_code == 409
+        
+        # test with valid (only change model)
+        valid["name"] = "test-course-x"
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 204
+        
+        # create invalid request body for 400
+        valid.pop("name")
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 400
+        
+        valid = _get_course_json()
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert body["name"] == valid["name"]
+        
+    def test_delete(self, client):
+        """
+        Tests the DELETE method. Checks that a valid request reveives 204
+        response and that trying to GET the sensor afterwards results in 404.
+        Also checks that trying to delete a sensor that doesn't exist results
+        in 404.
+        """
+        
+        resp = client.delete(self.RESOURCE_URL)
+        assert resp.status_code == 204
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 404
+        resp = client.delete(self.INVALID_URL)
+        assert resp.status_code == 404
+        
+        
+
+
 
 ## TODO
