@@ -94,7 +94,7 @@ class FrolftrackerBuilder(MasonBuilder):
 
     def add_control_modify_player(self, player_id):
         self.add_control(
-            "frolf:modify-player",
+            "edit",
             url_for("api.playeritem", player_id=player_id),
             method="PUT",
             encoding="json",
@@ -122,7 +122,7 @@ class FrolftrackerBuilder(MasonBuilder):
 
     def add_control_modify_course(self, course_id):
         self.add_control(
-            "frolf:modify-course",
+            "edit",
             url_for("api.courseitem", course_id=course_id),
             method="PUT",
             encoding="json",
@@ -150,7 +150,7 @@ class FrolftrackerBuilder(MasonBuilder):
 
     def add_control_modify_score(self, score_id):
         self.add_control(
-            "frolf:modify-score",
+            "edit",
             url_for("api.scoreitem", score_id=score_id),
             method="PUT",
             encoding="json",

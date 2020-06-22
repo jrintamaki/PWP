@@ -176,6 +176,7 @@ class TestPlayerCollection(object):
         assert resp.status_code == 200
         body = json.loads(resp.data)
         _check_namespace(client, body)
+        _check_control_get_method("self", client, body)
         _check_control_post_method_player("frolf:add-player", client, body)
         assert len(body["items"]) == 4
         for item in body["items"]:
@@ -214,5 +215,86 @@ class TestPlayerCollection(object):
         invalid = {"namme": "extra-player-1"}
         resp = client.post(self.RESOURCE_URL, json=invalid)
         assert resp.status_code == 400
+
+class TestPlayerItem(object):
+    
+    RESOURCE_URL = "/api/players/1/"
+    INVALID_URL = "/api/players/999/"
+    
+    def test_get(self, client):
+        """
+        Tests the GET method. Checks that the response status code is 200, and
+        then checks that all of the expected attributes and controls are
+        present, and the controls work. Also checks that all of the items from
+        the DB popluation are present, and their controls.
+        """
+
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert body["name"] == "test-player-0"
+        _check_namespace(client, body)
+        _check_control_get_method("profile", client, body)
+        _check_control_get_method("collection", client, body)
+        _check_control_get_method("frolf:scores-by", client, body)
+        _check_control_put_method_player("edit", client, body)
+        _check_control_delete_method("frolf:delete", client, body)
+        resp = client.get(self.INVALID_URL)
+        assert resp.status_code == 404
+
+    def test_put(self, client):
+        """
+        Tests the PUT method. Checks all of the possible erroe codes, and also
+        checks that a valid request receives a 204 response. Also tests that
+        when name is changed, the sensor can be found from a its new URI. 
+        """
+        
+        valid = _get_player_json()
+        
+        # test with wrong content type
+        resp = client.put(self.RESOURCE_URL, data=json.dumps(valid))
+        assert resp.status_code == 415
+        
+        resp = client.put(self.INVALID_URL, json=valid)
+        assert resp.status_code == 404
+        
+        # test with another sensor's name
+        #valid["name"] = "test-sensor-2"
+        #resp = client.put(self.RESOURCE_URL, json=valid)
+        #assert resp.status_code == 409
+        
+        # test with valid (only change model)
+        valid["name"] = "test-player-x"
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 204
+        
+        # create invalid request body for 400
+        invalid = {"namme": "extra-player-1"}
+        resp = client.put(self.RESOURCE_URL, json=invalid)
+        assert resp.status_code == 400
+        
+        valid = _get_player_json()
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert body["name"] == valid["name"]
+        
+    def test_delete(self, client):
+        """
+        Tests the DELETE method. Checks that a valid request reveives 204
+        response and that trying to GET the sensor afterwards results in 404.
+        Also checks that trying to delete a sensor that doesn't exist results
+        in 404.
+        """
+        
+        resp = client.delete(self.RESOURCE_URL)
+        assert resp.status_code == 204
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 404
+        resp = client.delete(self.INVALID_URL)
+        assert resp.status_code == 404
+        
+        
 
 ## TODO

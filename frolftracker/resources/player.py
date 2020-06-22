@@ -81,6 +81,12 @@ class PlayerItem(Resource):
 
 
     def put(self, player_id):
+        if not request.json:
+            return create_error_response(
+                415, "Unsupported media type",
+                "Requests must be JSON"
+            )
+
         db_player = Player.query.filter_by(id=player_id).first()
         if db_player is None:
             return create_error_response(
