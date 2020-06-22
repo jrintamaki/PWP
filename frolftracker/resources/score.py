@@ -15,6 +15,8 @@ class ScoreCollection(Resource):
 
         body.add_namespace("frolf", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.scorecollection"))
+        body.add_control("frolf:players-all", url_for("api.playercollection"))
+        body.add_control("frolf:courses-all", url_for("api.coursecollection"))
         body.add_control_add_score()
         body["items"] = []
 
@@ -38,7 +40,7 @@ class ScoreCollection(Resource):
 
         for db_score in query:
             item = FrolftrackerBuilder(
-                id=db_score.id,
+                score_id=db_score.id,
                 throws=db_score.throws,
                 date=db_score.date,
                 player_id=db_score.player_id,
@@ -108,13 +110,13 @@ class ScoreItem(Resource):
                 "No score found with the id {}".format(score_id)
             )
 
-        body = FrolftrackerBuilder(score_id=db_score.id, name=db_score.throws, date=db_score.date, player_id=db_score.player_id, course_id=db_score.course_id)
+        body = FrolftrackerBuilder(score_id=db_score.id, throws=db_score.throws, date=db_score.date, player_id=db_score.player_id, course_id=db_score.course_id)
         body.add_namespace("frolf", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.scoreitem", score_id=score_id))
         body.add_control("profile", SCORE_PROFILE)
         body.add_control("collection", url_for("api.scorecollection"))
-        body.add_control("player", url_for("api.playeritem", player_id=db_score.player_id))
-        body.add_control("course", url_for("api.courseitem", course_id=db_score.course_id))
+        body.add_control("frolf:player", url_for("api.playeritem", player_id=db_score.player_id))
+        body.add_control("frolf:course", url_for("api.courseitem", course_id=db_score.course_id))
         body.add_control_delete_score(score_id)
         body.add_control_modify_score(score_id)
 
@@ -122,6 +124,11 @@ class ScoreItem(Resource):
 
 
     def put(self, score_id):
+        if not request.json:
+            return create_error_response(
+                415, "Unsupported media type",
+                "Requests must be JSON"
+            )
         db_score = Score.query.filter_by(id=score_id).first()
         if db_score is None:
             return create_error_response(
@@ -152,7 +159,7 @@ class ScoreItem(Resource):
         db_score.date = request.json["date"]
         db_score.player_id = request.json["player_id"]
         db_score.course_id = request.json["course_id"]
-        db.score.course = course
+        db_score.course = course
         db_score.player = player
 
         try:
@@ -174,4 +181,5 @@ class ScoreItem(Resource):
             )
 
         db.session.delete(db_score)
+        db.session.commit()
         return Response(status=204)
