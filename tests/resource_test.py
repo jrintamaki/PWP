@@ -592,6 +592,88 @@ class TestScoreCollection(object):
             assert "player_id" in item
             assert "course_id" in item
 
+    def test_get_by_player(self, client):
+        """
+        Tests the GET method filtered by player id. Checks that the response status code is 200, and
+        then checks that all of the expected attributes and controls are
+        present, and the controls work. Also checks that all of the items from
+        the DB population are present, and their controls.
+        """
+        
+        resp = client.get(self.RESOURCE_URL, query_string={"player_id": 1})
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        _check_namespace(client, body)
+        _check_control_get_method("self", client, body)
+        _check_control_get_method("frolf:players-all", client, body)
+        _check_control_get_method("frolf:courses-all", client, body)
+        _check_control_post_method_score("frolf:add-score", client, body)
+        assert len(body["items"]) == 2
+        for item in body["items"]:
+            _check_control_get_method("self", client, item)
+            _check_control_get_method("profile", client, item)
+            assert "score_id" in item
+            assert "throws" in item
+            assert "date" in item
+            assert "player_id" in item
+            assert item["player_id"] == 1
+            assert "course_id" in item
+
+    def test_get_by_course(self, client):
+        """
+        Tests the GET method filtered by course id. Checks that the response status code is 200, and
+        then checks that all of the expected attributes and controls are
+        present, and the controls work. Also checks that all of the items from
+        the DB population are present, and their controls.
+        """
+        
+        resp = client.get(self.RESOURCE_URL, query_string={"course_id": 1})
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        _check_namespace(client, body)
+        _check_control_get_method("self", client, body)
+        _check_control_get_method("frolf:players-all", client, body)
+        _check_control_get_method("frolf:courses-all", client, body)
+        _check_control_post_method_score("frolf:add-score", client, body)
+        assert len(body["items"]) == 2
+        for item in body["items"]:
+            _check_control_get_method("self", client, item)
+            _check_control_get_method("profile", client, item)
+            assert "score_id" in item
+            assert "throws" in item
+            assert "date" in item
+            assert "player_id" in item
+            assert item["course_id"] == 1
+            assert "course_id" in item
+
+    def test_get_by_player_and_course(self, client):
+        """
+        Tests the GET method filtered by player id and course id. Checks that the response status code is 200, and
+        then checks that all of the expected attributes and controls are
+        present, and the controls work. Also checks that all of the items from
+        the DB population are present, and their controls.
+        """
+        
+        resp = client.get(self.RESOURCE_URL, query_string={"player_id": 1, "course_id": 1})
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        _check_namespace(client, body)
+        _check_control_get_method("self", client, body)
+        _check_control_get_method("frolf:players-all", client, body)
+        _check_control_get_method("frolf:courses-all", client, body)
+        _check_control_post_method_score("frolf:add-score", client, body)
+        assert len(body["items"]) == 2
+        for item in body["items"]:
+            _check_control_get_method("self", client, item)
+            _check_control_get_method("profile", client, item)
+            assert "score_id" in item
+            assert "throws" in item
+            assert "date" in item
+            assert "player_id" in item
+            assert item["player_id"] == 1
+            assert item["course_id"] == 1
+            assert "course_id" in item
+
 
     def test_post(self, client):
         """

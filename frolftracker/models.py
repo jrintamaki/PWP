@@ -23,7 +23,7 @@ class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
 
-    scores = db.relationship("Score", cascade="all,delete", back_populates="player")
+    scores = db.relationship("Score", cascade="all,delete", lazy="dynamic",back_populates="player")
 
     def __repr__(self):
         return "{} <{}>".format(self.name, self.id)
@@ -118,7 +118,7 @@ class Course(db.Model):
     num_holes = db.Column(db.Integer, nullable=False, default=18)
     par = db.Column(db.Integer, nullable=False, default=54)
 
-    scores = db.relationship("Score", cascade="all,delete", back_populates="course")
+    scores = db.relationship("Score", cascade="all,delete", lazy="dynamic", back_populates="course")
 
     def __repr__(self):
         return "{} <{}>".format(self.name, self.id)

@@ -10,7 +10,11 @@ from frolftracker.utils import create_error_response, FrolftrackerBuilder
 
 class ScoreCollection(Resource):
     
-    def get(self, player_id=None, course_id=None):
+    def get(self):
+        # get query parameters from request
+        player_id = request.args.get("player_id")
+        course_id = request.args.get("course_id")
+
         body = FrolftrackerBuilder()
 
         body.add_namespace("frolf", LINK_RELATIONS_URL)
@@ -25,7 +29,7 @@ class ScoreCollection(Resource):
             query = Score.query.all()
         elif course_id is not None and player_id is not None:
             player = Player.query.filter_by(id=player_id).first()
-            query = player.scores.query.filter_by(course_id=course_id).all()
+            query = player.scores.filter_by(course_id=course_id).all()
         elif course_id is not None:
             course = Course.query.filter_by(id=course_id).first()
             query = course.scores
