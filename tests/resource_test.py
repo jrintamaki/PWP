@@ -199,19 +199,20 @@ class TestPlayerCollection(object):
         # test with valid and see that it exists afterward
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 201
-        assert resp.headers["Location"].endswith(self.RESOURCE_URL + valid["name"] + "/")
+        print(resp.headers["Location"])
+        assert resp.headers["Location"].endswith(self.RESOURCE_URL + "5" + "/")
         resp = client.get(resp.headers["Location"])
         assert resp.status_code == 200
         body = json.loads(resp.data)
-        assert body["name"] == "extra-player-0"
+        assert body["name"] == "extra-player-1"
         
         # send same data again for 409
         # resp = client.post(self.RESOURCE_URL, json=valid)
         # assert resp.status_code == 409
         
-        # remove model field for 400
-        valid.pop("name")
-        resp = client.post(self.RESOURCE_URL, json=valid)
+        # create invalid request body for 400
+        invalid = {"namme": "extra-player-1"}
+        resp = client.post(self.RESOURCE_URL, json=invalid)
         assert resp.status_code == 400
 
 ## TODO
