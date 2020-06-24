@@ -1,2 +1,2 @@
-graft sensorhub/static
+graft frolftracker/static
 global-exclude *.pyc
