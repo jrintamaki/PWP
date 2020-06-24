@@ -18,3 +18,7 @@ See requirements.txt
 > export FLASK_ENV=development
 
 > flask run
+
+# Running tests with coverage report
+
+> pytest --cov-report term-missing --cov=frolftracker
