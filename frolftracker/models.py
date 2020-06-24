@@ -43,7 +43,6 @@ class Player(db.Model):
             "description": "Player's name",
             "type": "string"
         }
-        # TODO: scores
 
         return schema
 
@@ -87,7 +86,7 @@ class Score(db.Model):
         properties["date"] = {
             "description": "Date this round was played",
             "type": "string",
-            "pattern": "^[0-9]{4}-[01][0-9]-[0-3][0-9]" #TODO: check that this works
+            "pattern": "^[0-9]{4}-[01][0-9]-[0-3][0-9]"
         }
         properties["player_id"] = {
             "description": "ID of the player",
@@ -98,8 +97,6 @@ class Score(db.Model):
             "type": "integer"
         }
 
-        # TODO: player, course
- 
         return schema
 
 class Course(db.Model):
@@ -146,8 +143,6 @@ class Course(db.Model):
             "description": "Par score of this course",
             "type": "integer"
         }
-
-        #TODO: scores
 
         return schema
 

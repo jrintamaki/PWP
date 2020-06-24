@@ -113,8 +113,8 @@ class CourseItem(Resource):
             db.session.commit()
         except IntegrityError:
             return create_error_response(
-                500, "TODO",
-                "TODO '{}'.".format(request.json["id"])
+                409, "Already exists",
+                "Course with name '{}' already exists.".format(request.json["name"])
             )
 
         return Response(status=204)

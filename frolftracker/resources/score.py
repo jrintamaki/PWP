@@ -36,11 +36,6 @@ class ScoreCollection(Resource):
         elif player_id is not None:
             player = Player.query.filter_by(id=player_id).first()
             query = player.scores
-        else:
-            return create_error_response(
-                500, "TODO",
-                "TODO"
-            )
 
         for db_score in query:
             item = FrolftrackerBuilder(
@@ -91,14 +86,9 @@ class ScoreCollection(Resource):
             player=player
         )
 
-        try:
-            db.session.add(score)
-            db.session.commit()
-        except IntegrityError:
-            return create_error_response(
-                500, "Score",
-                "Something went wrong :("
-            )
+        db.session.add(score)
+        db.session.commit()
+
 
         return Response(status=201, headers={
             "Location": url_for("api.scoreitem", score_id=score.id)
@@ -119,8 +109,8 @@ class ScoreItem(Resource):
         body.add_control("self", url_for("api.scoreitem", score_id=score_id))
         body.add_control("profile", SCORE_PROFILE)
         body.add_control("collection", url_for("api.scorecollection"))
-        body.add_control("frolf:player", url_for("api.playeritem", player_id=db_score.player_id))
-        body.add_control("frolf:course", url_for("api.courseitem", course_id=db_score.course_id))
+        body.add_control("frolf:player", url_for("api.playeritem", player_id=db_score.player_id), method="GET", title="Player of this score")
+        body.add_control("frolf:course", url_for("api.courseitem", course_id=db_score.course_id), method="GET", title="Course of this score")
         body.add_control_delete_score(score_id)
         body.add_control_modify_score(score_id)
 
@@ -166,13 +156,8 @@ class ScoreItem(Resource):
         db_score.course = course
         db_score.player = player
 
-        try:
-            db.session.commit()
-        except IntegrityError:
-            return create_error_response(
-                500, "TODO",
-                "TODO '{}'.".format(request.json["id"])
-            )
+        db.session.commit()
+
 
         return Response(status=204)
 

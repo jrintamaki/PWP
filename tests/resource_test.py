@@ -468,8 +468,8 @@ class TestCourseCollection(object):
         assert body["name"] == "extra-course-1"
         
         # send same data again for 409
-        # resp = client.post(self.RESOURCE_URL, json=valid)
-        # assert resp.status_code == 409
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 409
         
         # create invalid request body for 400
         valid.pop("name")
@@ -520,10 +520,10 @@ class TestCourseItem(object):
         resp = client.put(self.INVALID_URL, json=valid)
         assert resp.status_code == 404
         
-        # test with another sensor's name
-        #valid["name"] = "test-sensor-2"
-        #resp = client.put(self.RESOURCE_URL, json=valid)
-        #assert resp.status_code == 409
+        # test with another course's name
+        valid["name"] = "test-course-2"
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 409
         
         # test with valid (only change model)
         valid["name"] = "test-course-x"
@@ -702,9 +702,21 @@ class TestScoreCollection(object):
         assert body["player_id"] == 1
         assert body["course_id"] == 1
         
-        # send same data again for 409
-        # resp = client.post(self.RESOURCE_URL, json=valid)
-        # assert resp.status_code == 409
+        # send score for non-existent player
+        valid["player_id"] = 999
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 404
+
+        # send score for non-existent course
+        valid["player_id"] = 1
+        valid["course_id"] = 999
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 404
+
+        # edit date to invalid value
+        valid["date"] = "01-01-2020"
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 400
         
         # create invalid request body for 400
         valid.pop("player_id")
@@ -731,6 +743,8 @@ class TestScoreItem(object):
         _check_namespace(client, body)
         _check_control_get_method("profile", client, body)
         _check_control_get_method("collection", client, body)
+        _check_control_get_method("frolf:player", client, body)
+        _check_control_get_method("frolf:course", client, body)
         _check_control_put_method_score("edit", client, body)
         _check_control_delete_method("frolf:delete", client, body)
         resp = client.get(self.INVALID_URL)
@@ -752,16 +766,27 @@ class TestScoreItem(object):
         resp = client.put(self.INVALID_URL, json=valid)
         assert resp.status_code == 404
         
-        # test with another sensor's name
-        #valid["name"] = "test-sensor-2"
-        #resp = client.put(self.RESOURCE_URL, json=valid)
-        #assert resp.status_code == 409
-        
         # test with valid (only change throws)
         valid["throws"] = 123
         resp = client.put(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 204
         
+        # edit score for non-existent player
+        valid["player_id"] = 999
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 404
+
+        # edit score for non-existent course
+        valid["player_id"] = 1
+        valid["course_id"] = 999
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 404
+
+        # edit date to invalid value
+        valid["date"] = "01-01-2020"
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 400
+
         # create invalid request body for 400
         valid.pop("player_id")
         resp = client.put(self.RESOURCE_URL, json=valid)
@@ -790,4 +815,21 @@ class TestScoreItem(object):
         assert resp.status_code == 404
 
 
-## TODO
+class TestEntryPoint(object):
+    
+    RESOURCE_URL = "/api/"
+    
+    def test_get(self, client):
+        """
+        Tests the GET method. Checks that the response status code is 200, and
+        then checks that all of the expected attributes and controls are
+        present, and the controls work. 
+        """
+
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        _check_namespace(client, body)
+        _check_control_get_method("frolf:players-all", client, body)
+        _check_control_get_method("frolf:courses-all", client, body)
+        _check_control_get_method("frolf:scores-all", client, body)

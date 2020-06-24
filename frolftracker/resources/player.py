@@ -44,14 +44,8 @@ class PlayerCollection(Resource):
             name=request.json["name"]
         )
 
-        try:
-            db.session.add(player)
-            db.session.commit()
-        except IntegrityError:
-            return create_error_response(
-                409, "Already exists",
-                "Player with name '{}' already exists.".format(request.json["name"])
-            )
+        db.session.add(player)
+        db.session.commit()
 
         return Response(status=201, headers={
             "Location": url_for("api.playeritem", player_id=player.id)
@@ -101,13 +95,8 @@ class PlayerItem(Resource):
 
         db_player.name = request.json["name"]
 
-        try:
-            db.session.commit()
-        except IntegrityError:
-            return create_error_response(
-                500, "TODO",
-                "TODO '{}'.".format(request.json["id"])
-            )
+        db.session.commit()
+
 
         return Response(status=204)
 

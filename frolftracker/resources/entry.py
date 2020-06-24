@@ -9,8 +9,8 @@ class EntryPoint(Resource):
     def get(self):
         body = MasonBuilder()
         body.add_namespace("frolf", LINK_RELATIONS_URL)
-        body.add_control("players-all", url_for("api.playercollection"))
-        body.add_control("courses-all", url_for("api.coursecollection"))
-        body.add_control("scores-all", url_for("api.scorecollection"))
+        body.add_control("frolf:players-all", url_for("api.playercollection"))
+        body.add_control("frolf:courses-all", url_for("api.coursecollection"))
+        body.add_control("frolf:scores-all", url_for("api.scorecollection"))
         
         return Response(json.dumps(body), status=200, mimetype=MASON)
