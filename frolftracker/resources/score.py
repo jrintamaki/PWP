@@ -11,7 +11,7 @@ from frolftracker.utils import create_error_response, FrolftrackerBuilder
 class ScoreCollection(Resource):
     
     def get(self):
-        # get query parameters from request
+        # Get query parameters from request
         player_id = request.args.get("player_id")
         course_id = request.args.get("course_id")
 
@@ -24,15 +24,18 @@ class ScoreCollection(Resource):
         body.add_control_add_score()
         body["items"] = []
 
-        # Sorry for spaghetti-o's
+        # All scores
         if course_id is None and player_id is None:
             query = Score.query.all()
+        # Scores filtered by course AND player
         elif course_id is not None and player_id is not None:
             player = Player.query.filter_by(id=player_id).first()
             query = player.scores.filter_by(course_id=course_id).all()
+        # Scores filtered by course
         elif course_id is not None:
             course = Course.query.filter_by(id=course_id).first()
             query = course.scores
+        # Scores filtered by player
         elif player_id is not None:
             player = Player.query.filter_by(id=player_id).first()
             query = player.scores
@@ -158,7 +161,6 @@ class ScoreItem(Resource):
 
         db.session.commit()
 
-
         return Response(status=204)
 
     def delete(self, score_id):
@@ -171,4 +173,5 @@ class ScoreItem(Resource):
 
         db.session.delete(db_score)
         db.session.commit()
+
         return Response(status=204)

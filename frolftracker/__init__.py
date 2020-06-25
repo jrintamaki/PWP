@@ -34,10 +34,10 @@ def create_app(test_config=None):
 
     @app.route("/profiles/<profile>/")
     def send_profile(profile):
-        return "tomi pls fix"
+        return "you requests {} profile".format(profile)
     
     @app.route(LINK_RELATIONS_URL)
     def send_link_relations():
-        return "tomi pls fix"
+        return "link relations"
 
     return app

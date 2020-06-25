@@ -97,7 +97,6 @@ class PlayerItem(Resource):
 
         db.session.commit()
 
-
         return Response(status=204)
 
 
