@@ -109,7 +109,7 @@ def find_score_href(name, collection):
     pass
 
 def get_values_for_pick(option):
-    return str("{} {} {} {}").format(option['throws'], option['date'], option['course'], option['player'])
+    return str("{} {} {} {}").format(option['throws'], option['date'], option['course'], option['player'])
 
 def convert_value(value, schema_props):
     if schema_props["type"] == "integer":
