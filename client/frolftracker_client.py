@@ -71,6 +71,30 @@ def get_scores(s):
 
     return ret
 
+def get_players(s):
+    players_href = get_players_href(s)
+    resp = s.get(API_URL + players_href)
+    body = resp.json()
+    players = body['items']
+    ret = []
+    for player in players:
+        ret.append({'player': player['name'], 'href': player['@controls']['self']['href']})
+
+    return ret
+
+def get_courses(s):
+    courses_href = get_courses_href(s)
+    resp = s.get(API_URL + courses_href)
+    body = resp.json()
+    courses = body['items']
+    ret = []
+    for course in courses:
+        ret.append({'course': course['name'], 'par': course['par'], 'num_holes': course['num_holes'], \
+                'href': course['@controls']['self']['href']})
+
+    return ret
+
+
 def get_score_by_id(s, id):
     scores_href = get_scores_href(s)
     resp = s.get(API_URL + scores_href + id)
@@ -108,8 +132,14 @@ def find_course_href(name, collection):
 def find_score_href(name, collection):
     pass
 
-def get_values_for_pick(option):
+def get_scores_for_pick(option):
     return str("{} {} {} {}").format(option['throws'], option['date'], option['course'], option['player'])
+
+def get_players_for_pick(option):
+    return option['player']
+
+def get_courses_for_pick(option):
+    return str("{} {} {}").format(option['course'], option['par'], option['num_holes'])
 
 def convert_value(value, schema_props):
     if schema_props["type"] == "integer":
@@ -192,20 +222,27 @@ def scores_menu(s):
     scores = get_scores(s)
     if option == "Get scores":
         try:
-            option, _ = pick(scores, "Press enter to continue.", indicator='', options_map_func=get_values_for_pick)
+            option, _ = pick(scores, "Press enter to continue.", indicator='', options_map_func=get_scores_for_pick)
         except ValueError:
             prompt("No scores. \n   Enter to continue")
     elif option == "Add score":
         prompt_from_schema(s, body["@controls"]["frolf:add-score"])
         prompt("Success! \n   Enter to continue")
     elif option == "Edit score":
-        option, _ = pick(scores, "Select score to edit", options_map_func=get_values_for_pick)
-        body = s.get(API_URL + scores_href + option['id']).json()
-        prompt_from_schema_edit(s, body)
-        prompt("Success! \n   Enter to continue")
+        try:
+            option, _ = pick(scores, "Select score to edit", options_map_func=get_scores_for_pick)
+            body = s.get(API_URL + scores_href + option['id']).json()
+            prompt_from_schema_edit(s, body)
+            prompt("Success! \n   Enter to continue")
+        except ValueError:
+            prompt("No scores. \n   Enter to continue")
     elif option == "Delete score":
-        option, _ = pick(scores, "Select score to edit", options_map_func=get_values_for_pick)
-        delete_score_by_id(s, option['id'])
+        try:
+            option, _ = pick(scores, "Select score to edit", options_map_func=get_scores_for_pick)
+            delete_score_by_id(s, option['id'])
+        except ValueError:
+            prompt("No scores. \n   Enter to continue")
+
     elif option == "Return":
         pass
 
@@ -216,8 +253,12 @@ def players_menu(s):
     option, _ = pick(options, title)
     players_href = get_players_href(s)
     body = s.get(API_URL + players_href).json()
+    players = get_players(s)
     if option == "Get players":
-        prompt("Not implemented")
+        try:
+            option, _ = pick(players, "Press enter to continue.", indicator='', options_map_func=get_players_for_pick)
+        except ValueError:
+            prompt("No players. \n   Enter to continue")
     elif option == "Add player":
         prompt_from_schema(s, body["@controls"]["frolf:add-player"])
         prompt("Success! \n   Enter to continue")
@@ -237,9 +278,12 @@ def courses_menu(s):
     option, _ = pick(options, title)
     courses_href = get_courses_href(s)
     body = s.get(API_URL + courses_href).json()
-
+    courses = get_courses(s)
     if option == "Get courses":
-        prompt("Not implemented")
+        try:
+            option, _ = pick(courses, "Press enter to continue.", indicator='', options_map_func=get_courses_for_pick)
+        except ValueError:
+            prompt("No courses. \n   Enter to continue")
     elif option == "Add course":
         prompt_from_schema(s, body["@controls"]["frolf:add-course"])
         prompt("Success! \n   Enter to continue")
