@@ -191,8 +191,10 @@ def scores_menu(s):
     body = s.get(API_URL + scores_href).json()
     scores = get_scores(s)
     if option == "Get scores":
-        option, _ = pick(scores, "Press enter to continue.", indicator='', options_map_func=get_values_for_pick)
-
+        try:
+            option, _ = pick(scores, "Press enter to continue.", indicator='', options_map_func=get_values_for_pick)
+        except ValueError:
+            prompt("No scores. \n   Enter to continue")
     elif option == "Add score":
         prompt_from_schema(s, body["@controls"]["frolf:add-score"])
         prompt("Success! \n   Enter to continue")
