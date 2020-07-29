@@ -10,7 +10,7 @@ import requests
 from pick import pick
 API_URL = "http://localhost:5000"
 
-# NOTE: This is borrowed from Lovelace exercise 4: "mumeta_submit.py". Credit to Mika Oja
+# NOTE: This is borrowed from Lovelace exercise 4: "mumeta_submit.py".
 class APIError(Exception):
     """
     Exception class used when the API responds with an error code. Gives
@@ -178,7 +178,7 @@ def prompt_from_schema(s, ctrl):
         return resp.headers["Location"]
     raise APIError(resp.status_code, resp.content)
 
-# NOTE: This is borrowed from Lovelace exercise 4: "mumeta_submit.py". Credit to Mika Oja
+# NOTE: This is borrowed from Lovelace exercise 4: "mumeta_submit.py".
 def do_request(s, ctrl, data=None):
     if data:
         resp = s.request(
