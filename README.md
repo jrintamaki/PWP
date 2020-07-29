@@ -20,7 +20,9 @@ See requirements.txt
 > export FLASK_APP=frolftracker
 
 > export FLASK_ENV=development
+
 > python3 -c "from frolftracker import db, create_app; db.create_all(app=create_app())"
+
 > flask run
 
 # Running tests with coverage report
