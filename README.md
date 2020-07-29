@@ -1,4 +1,4 @@
-# PWP SPRING 2019
+# PWP 2020
 # PROJECT NAME
 Frolf Tracker
 # Group information
@@ -6,9 +6,13 @@ Frolf Tracker
 * Student 2. Julius Rintamäki, @student.oulu.fi
 * Student 3. Ville Karsikko, @student.oulu
 
+## Run server with docker
+> docker-compose up
+
+## Run locally 
 # Dependencies
 See requirements.txt
-
+> pip install -r requirments.txt
 # Setup
 > pip install -e .
 
@@ -16,7 +20,7 @@ See requirements.txt
 > export FLASK_APP=frolftracker
 
 > export FLASK_ENV=development
-
+> python3 -c "from frolftracker import db, create_app; db.create_all(app=create_app())"
 > flask run
 
 # Running tests with coverage report
