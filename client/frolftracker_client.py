@@ -122,16 +122,6 @@ def delete_score_by_id(s, id):
     body = resp.json()
     do_request(s, body['@controls']['frolf:delete'])
 
-
-def find_player_href(name, collection):
-    pass
-
-def find_course_href(name, collection):
-    pass
-
-def find_score_href(name, collection):
-    pass
-
 def get_scores_for_pick(option):
     return str("{} {} {} {}").format(option['throws'], option['date'], option['course'], option['player'])
 
@@ -212,6 +202,7 @@ def submit_data(s, ctrl, data):
     return resp
 
 def scores_menu(s):
+    """Generates and handles scores menu"""
     title = "Choose action"
     options = ["Get scores", "Add score", "Edit score", "Delete score", "Return",]
 
@@ -247,6 +238,7 @@ def scores_menu(s):
         pass
 
 def players_menu(s):
+    """Generates and handles players menu"""
     title = "Choose action"
     options = ["Get players", "Add player", "Edit player", "Delete player", "Get scores by player", "Return",]
 
@@ -272,6 +264,7 @@ def players_menu(s):
         pass
 
 def courses_menu(s):
+    """Generates and handles courses menu"""
     title = "Choose action"
     options = ["Get courses", "Add course", "Edit course", "Delete course", "Get scores by course", "Return",]
 
@@ -298,6 +291,9 @@ def courses_menu(s):
 
 
 def prompt(ps=None, value=''):
+    """Creates prompt for user
+        ps is prompt string
+        value is empty by default, but starting value can be given"""
     stdscr = curses.initscr()
     stdscr.clear()
     curses.echo()
